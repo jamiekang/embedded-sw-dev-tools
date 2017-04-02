@@ -1,0 +1,1564 @@
+   0  $accept : source $end
+
+   1  source :
+   2         | source sentence
+
+   3  sentence : LABEL statement '\n'
+   4           | statement '\n'
+
+   5  statement :
+   6            | instruction_cond COMMENT
+   7            | instruction_cond
+   8            | COMMENT
+   9            | instruction_cond KSEPARATOR instruction
+  10            | instruction_cond KSEPARATOR instruction COMMENT
+  11            | instruction_cond KSEPARATOR instruction KSEPARATOR instruction
+  12            | instruction_cond KSEPARATOR instruction KSEPARATOR instruction COMMENT
+
+  13  instruction_cond : ifcond instruction
+
+  14  instruction : opcode offset do_until
+  15              | opcode operands
+  16              | opcode
+
+  17  ifcond :
+  18         | CIF ccode
+
+  19  ccode : CEQC
+  20        | CEQ
+  21        | CNEC
+  22        | CNE
+  23        | CGT
+  24        | CLE
+  25        | CLT
+  26        | CGE
+  27        | CAVC
+  28        | CNOT_AVC
+  29        | CAV
+  30        | CNOT_AV
+  31        | CACC
+  32        | CNOT_ACC
+  33        | CAC
+  34        | CNOT_AC
+  35        | CSVC
+  36        | CNOT_SVC
+  37        | CSV
+  38        | CNOT_SV
+  39        | CMVC
+  40        | CNOT_MVC
+  41        | CMV
+  42        | CNOT_MV
+  43        | CNOT_CE
+  44        | CTRUE
+  45        | CUMC
+  46        | CNOT_UMC
+
+  47  do_until : KUNTIL term
+
+  48  offset : OFFSET
+
+  49  opcode : OPCODE
+
+  50  term :
+  51       | KCE
+  52       | KFOREVER
+
+  53  operands : operands ',' operand options
+  54           | operand options
+
+  55  operand : registers conjugate
+  56          | constant
+  57          | keywords
+  58          | addr
+  59          | complex_constant
+  60          | ena
+
+  61  ena : MSEC_REG
+  62      | MBIT_REV
+  63      | MAV_LATCH
+  64      | MAL_SAT
+  65      | MM_MODE
+  66      | MTIMER
+  67      | MSEC_DAG
+  68      | MM_BIAS
+  69      | MINT
+
+  70  conjugate :
+  71            | MCONJ
+
+  72  addr : KDM '(' addr_expr ')'
+  73       | KPM '(' addr_expr ')'
+  74       | addr_expr_no_reg
+
+  75  addr_expr : addr_expr_reg
+  76            | addr_expr_no_reg
+  77            | constant
+
+  78  addr_expr_reg : RIX addr_op RMX
+  79                | RIX addr_op constant
+  80                | RIX
+
+  81  addr_expr_no_reg : offset KPRE constant
+  82                   | offset '[' constant ']'
+  83                   | offset
+
+  84  keywords : KPC
+  85           | KLOOP
+  86           | KSTS
+
+  87  addr_op : KPOST
+  88          | KPRE
+
+  89  options :
+  90          | '(' moptions ')'
+
+  91  complex_constant : '(' constant ',' constant ')'
+
+  92  registers : RIX
+  93            | RMX
+  94            | RLX
+  95            | RBX
+  96            | RRX
+  97            | RACC
+  98            | RCNTR
+  99            | RLPEVER
+ 100            | RCACTL
+ 101            | RLPSTACK
+ 102            | RPCSTACK
+ 103            | RASTATR
+ 104            | RASTATI
+ 105            | RASTATC
+ 106            | RMSTAT
+ 107            | RSSTAT
+ 108            | RPX
+ 109            | RICNTL
+ 110            | RIMASK
+ 111            | RIRPTL
+ 112            | RIVEC0
+ 113            | RIVEC1
+ 114            | RIVEC2
+ 115            | RIVEC3
+ 116            | RDSTAT0
+ 117            | RDSTAT1
+ 118            | RUMCOUNT
+ 119            | RID
+ 120            | KNONE
+
+ 121  constant : expression
+
+ 122  moptions : FRND
+ 123           | FSS
+ 124           | FSU
+ 125           | FUS
+ 126           | FUU
+ 127           | FHI
+ 128           | FLO
+ 129           | FHIRND
+ 130           | FLORND
+ 131           | FNORND
+ 132           | FHIX
+
+ 133  expression : '-' expression
+ 134             | '(' expression ')'
+ 135             | number
+
+ 136  number : DEC_NUMBER
+ 137         | BIN_NUMBER
+ 138         | HEX_NUMBER
+
+state 0
+	$accept : . source $end  (0)
+	source : .  (1)
+
+	.  reduce 1
+
+	source  goto 1
+
+
+state 1
+	$accept : source . $end  (0)
+	source : source . sentence  (2)
+	statement : .  (5)
+	ifcond : .  (17)
+
+	$end  accept
+	LABEL  shift 2
+	COMMENT  shift 3
+	CIF  shift 4
+	OPCODE  reduce 17
+	'\n'  reduce 5
+
+	instruction_cond  goto 5
+	ifcond  goto 6
+	sentence  goto 7
+	statement  goto 8
+
+
+state 2
+	sentence : LABEL . statement '\n'  (3)
+	statement : .  (5)
+	ifcond : .  (17)
+
+	COMMENT  shift 3
+	CIF  shift 4
+	OPCODE  reduce 17
+	'\n'  reduce 5
+
+	instruction_cond  goto 5
+	ifcond  goto 6
+	statement  goto 9
+
+
+state 3
+	statement : COMMENT .  (8)
+
+	.  reduce 8
+
+
+state 4
+	ifcond : CIF . ccode  (18)
+
+	CEQC  shift 10
+	CEQ  shift 11
+	CNEC  shift 12
+	CNE  shift 13
+	CGT  shift 14
+	CLE  shift 15
+	CLT  shift 16
+	CGE  shift 17
+	CAVC  shift 18
+	CNOT_AVC  shift 19
+	CAV  shift 20
+	CNOT_AV  shift 21
+	CACC  shift 22
+	CNOT_ACC  shift 23
+	CAC  shift 24
+	CNOT_AC  shift 25
+	CSVC  shift 26
+	CNOT_SVC  shift 27
+	CSV  shift 28
+	CNOT_SV  shift 29
+	CMVC  shift 30
+	CNOT_MVC  shift 31
+	CMV  shift 32
+	CNOT_MV  shift 33
+	CNOT_CE  shift 34
+	CTRUE  shift 35
+	CUMC  shift 36
+	CNOT_UMC  shift 37
+	.  error
+
+	ccode  goto 38
+
+
+state 5
+	statement : instruction_cond . COMMENT  (6)
+	statement : instruction_cond .  (7)
+	statement : instruction_cond . KSEPARATOR instruction  (9)
+	statement : instruction_cond . KSEPARATOR instruction COMMENT  (10)
+	statement : instruction_cond . KSEPARATOR instruction KSEPARATOR instruction  (11)
+	statement : instruction_cond . KSEPARATOR instruction KSEPARATOR instruction COMMENT  (12)
+
+	COMMENT  shift 39
+	KSEPARATOR  shift 40
+	'\n'  reduce 7
+
+
+state 6
+	instruction_cond : ifcond . instruction  (13)
+
+	OPCODE  shift 41
+	.  error
+
+	opcode  goto 42
+	instruction  goto 43
+
+
+state 7
+	source : source sentence .  (2)
+
+	.  reduce 2
+
+
+state 8
+	sentence : statement . '\n'  (4)
+
+	'\n'  shift 44
+	.  error
+
+
+state 9
+	sentence : LABEL statement . '\n'  (3)
+
+	'\n'  shift 45
+	.  error
+
+
+state 10
+	ccode : CEQC .  (19)
+
+	.  reduce 19
+
+
+state 11
+	ccode : CEQ .  (20)
+
+	.  reduce 20
+
+
+state 12
+	ccode : CNEC .  (21)
+
+	.  reduce 21
+
+
+state 13
+	ccode : CNE .  (22)
+
+	.  reduce 22
+
+
+state 14
+	ccode : CGT .  (23)
+
+	.  reduce 23
+
+
+state 15
+	ccode : CLE .  (24)
+
+	.  reduce 24
+
+
+state 16
+	ccode : CLT .  (25)
+
+	.  reduce 25
+
+
+state 17
+	ccode : CGE .  (26)
+
+	.  reduce 26
+
+
+state 18
+	ccode : CAVC .  (27)
+
+	.  reduce 27
+
+
+state 19
+	ccode : CNOT_AVC .  (28)
+
+	.  reduce 28
+
+
+state 20
+	ccode : CAV .  (29)
+
+	.  reduce 29
+
+
+state 21
+	ccode : CNOT_AV .  (30)
+
+	.  reduce 30
+
+
+state 22
+	ccode : CACC .  (31)
+
+	.  reduce 31
+
+
+state 23
+	ccode : CNOT_ACC .  (32)
+
+	.  reduce 32
+
+
+state 24
+	ccode : CAC .  (33)
+
+	.  reduce 33
+
+
+state 25
+	ccode : CNOT_AC .  (34)
+
+	.  reduce 34
+
+
+state 26
+	ccode : CSVC .  (35)
+
+	.  reduce 35
+
+
+state 27
+	ccode : CNOT_SVC .  (36)
+
+	.  reduce 36
+
+
+state 28
+	ccode : CSV .  (37)
+
+	.  reduce 37
+
+
+state 29
+	ccode : CNOT_SV .  (38)
+
+	.  reduce 38
+
+
+state 30
+	ccode : CMVC .  (39)
+
+	.  reduce 39
+
+
+state 31
+	ccode : CNOT_MVC .  (40)
+
+	.  reduce 40
+
+
+state 32
+	ccode : CMV .  (41)
+
+	.  reduce 41
+
+
+state 33
+	ccode : CNOT_MV .  (42)
+
+	.  reduce 42
+
+
+state 34
+	ccode : CNOT_CE .  (43)
+
+	.  reduce 43
+
+
+state 35
+	ccode : CTRUE .  (44)
+
+	.  reduce 44
+
+
+state 36
+	ccode : CUMC .  (45)
+
+	.  reduce 45
+
+
+state 37
+	ccode : CNOT_UMC .  (46)
+
+	.  reduce 46
+
+
+state 38
+	ifcond : CIF ccode .  (18)
+
+	.  reduce 18
+
+
+state 39
+	statement : instruction_cond COMMENT .  (6)
+
+	.  reduce 6
+
+
+state 40
+	statement : instruction_cond KSEPARATOR . instruction  (9)
+	statement : instruction_cond KSEPARATOR . instruction COMMENT  (10)
+	statement : instruction_cond KSEPARATOR . instruction KSEPARATOR instruction  (11)
+	statement : instruction_cond KSEPARATOR . instruction KSEPARATOR instruction COMMENT  (12)
+
+	OPCODE  shift 41
+	.  error
+
+	opcode  goto 42
+	instruction  goto 46
+
+
+state 41
+	opcode : OPCODE .  (49)
+
+	.  reduce 49
+
+
+state 42
+	instruction : opcode . offset do_until  (14)
+	instruction : opcode . operands  (15)
+	instruction : opcode .  (16)
+
+	OFFSET  shift 47
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	RCNTR  shift 52
+	RLPEVER  shift 53
+	RCACTL  shift 54
+	RLPSTACK  shift 55
+	RPCSTACK  shift 56
+	RASTATR  shift 57
+	RASTATI  shift 58
+	RASTATC  shift 59
+	RMSTAT  shift 60
+	RSSTAT  shift 61
+	RPX  shift 62
+	RICNTL  shift 63
+	RIMASK  shift 64
+	RIRPTL  shift 65
+	RIVEC0  shift 66
+	RIVEC1  shift 67
+	RIVEC2  shift 68
+	RIVEC3  shift 69
+	RDSTAT0  shift 70
+	RDSTAT1  shift 71
+	RUMCOUNT  shift 72
+	RID  shift 73
+	RIX  shift 74
+	RMX  shift 75
+	RLX  shift 76
+	RBX  shift 77
+	RRX  shift 78
+	RACC  shift 79
+	MSEC_REG  shift 80
+	MBIT_REV  shift 81
+	MAV_LATCH  shift 82
+	MAL_SAT  shift 83
+	MM_MODE  shift 84
+	MTIMER  shift 85
+	MSEC_DAG  shift 86
+	MM_BIAS  shift 87
+	MINT  shift 88
+	KNONE  shift 89
+	KPM  shift 90
+	KDM  shift 91
+	KPC  shift 92
+	KLOOP  shift 93
+	KSTS  shift 94
+	'('  shift 95
+	COMMENT  reduce 16
+	KSEPARATOR  reduce 16
+	'\n'  reduce 16
+
+	constant  goto 96
+	complex_constant  goto 97
+	expression  goto 98
+	number  goto 99
+	registers  goto 100
+	operands  goto 101
+	operand  goto 102
+	keywords  goto 103
+	offset  goto 104
+	addr  goto 105
+	addr_expr_no_reg  goto 106
+	ena  goto 107
+
+
+state 43
+	instruction_cond : ifcond instruction .  (13)
+
+	.  reduce 13
+
+
+state 44
+	sentence : statement '\n' .  (4)
+
+	.  reduce 4
+
+
+state 45
+	sentence : LABEL statement '\n' .  (3)
+
+	.  reduce 3
+
+
+state 46
+	statement : instruction_cond KSEPARATOR instruction .  (9)
+	statement : instruction_cond KSEPARATOR instruction . COMMENT  (10)
+	statement : instruction_cond KSEPARATOR instruction . KSEPARATOR instruction  (11)
+	statement : instruction_cond KSEPARATOR instruction . KSEPARATOR instruction COMMENT  (12)
+
+	COMMENT  shift 108
+	KSEPARATOR  shift 109
+	'\n'  reduce 9
+
+
+state 47
+	offset : OFFSET .  (48)
+
+	.  reduce 48
+
+
+state 48
+	number : DEC_NUMBER .  (136)
+
+	.  reduce 136
+
+
+state 49
+	number : BIN_NUMBER .  (137)
+
+	.  reduce 137
+
+
+state 50
+	number : HEX_NUMBER .  (138)
+
+	.  reduce 138
+
+
+state 51
+	expression : '-' . expression  (133)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	expression  goto 111
+	number  goto 99
+
+
+state 52
+	registers : RCNTR .  (98)
+
+	.  reduce 98
+
+
+state 53
+	registers : RLPEVER .  (99)
+
+	.  reduce 99
+
+
+state 54
+	registers : RCACTL .  (100)
+
+	.  reduce 100
+
+
+state 55
+	registers : RLPSTACK .  (101)
+
+	.  reduce 101
+
+
+state 56
+	registers : RPCSTACK .  (102)
+
+	.  reduce 102
+
+
+state 57
+	registers : RASTATR .  (103)
+
+	.  reduce 103
+
+
+state 58
+	registers : RASTATI .  (104)
+
+	.  reduce 104
+
+
+state 59
+	registers : RASTATC .  (105)
+
+	.  reduce 105
+
+
+state 60
+	registers : RMSTAT .  (106)
+
+	.  reduce 106
+
+
+state 61
+	registers : RSSTAT .  (107)
+
+	.  reduce 107
+
+
+state 62
+	registers : RPX .  (108)
+
+	.  reduce 108
+
+
+state 63
+	registers : RICNTL .  (109)
+
+	.  reduce 109
+
+
+state 64
+	registers : RIMASK .  (110)
+
+	.  reduce 110
+
+
+state 65
+	registers : RIRPTL .  (111)
+
+	.  reduce 111
+
+
+state 66
+	registers : RIVEC0 .  (112)
+
+	.  reduce 112
+
+
+state 67
+	registers : RIVEC1 .  (113)
+
+	.  reduce 113
+
+
+state 68
+	registers : RIVEC2 .  (114)
+
+	.  reduce 114
+
+
+state 69
+	registers : RIVEC3 .  (115)
+
+	.  reduce 115
+
+
+state 70
+	registers : RDSTAT0 .  (116)
+
+	.  reduce 116
+
+
+state 71
+	registers : RDSTAT1 .  (117)
+
+	.  reduce 117
+
+
+state 72
+	registers : RUMCOUNT .  (118)
+
+	.  reduce 118
+
+
+state 73
+	registers : RID .  (119)
+
+	.  reduce 119
+
+
+state 74
+	registers : RIX .  (92)
+
+	.  reduce 92
+
+
+state 75
+	registers : RMX .  (93)
+
+	.  reduce 93
+
+
+state 76
+	registers : RLX .  (94)
+
+	.  reduce 94
+
+
+state 77
+	registers : RBX .  (95)
+
+	.  reduce 95
+
+
+state 78
+	registers : RRX .  (96)
+
+	.  reduce 96
+
+
+state 79
+	registers : RACC .  (97)
+
+	.  reduce 97
+
+
+state 80
+	ena : MSEC_REG .  (61)
+
+	.  reduce 61
+
+
+state 81
+	ena : MBIT_REV .  (62)
+
+	.  reduce 62
+
+
+state 82
+	ena : MAV_LATCH .  (63)
+
+	.  reduce 63
+
+
+state 83
+	ena : MAL_SAT .  (64)
+
+	.  reduce 64
+
+
+state 84
+	ena : MM_MODE .  (65)
+
+	.  reduce 65
+
+
+state 85
+	ena : MTIMER .  (66)
+
+	.  reduce 66
+
+
+state 86
+	ena : MSEC_DAG .  (67)
+
+	.  reduce 67
+
+
+state 87
+	ena : MM_BIAS .  (68)
+
+	.  reduce 68
+
+
+state 88
+	ena : MINT .  (69)
+
+	.  reduce 69
+
+
+state 89
+	registers : KNONE .  (120)
+
+	.  reduce 120
+
+
+state 90
+	addr : KPM . '(' addr_expr ')'  (73)
+
+	'('  shift 112
+	.  error
+
+
+state 91
+	addr : KDM . '(' addr_expr ')'  (72)
+
+	'('  shift 113
+	.  error
+
+
+state 92
+	keywords : KPC .  (84)
+
+	.  reduce 84
+
+
+state 93
+	keywords : KLOOP .  (85)
+
+	.  reduce 85
+
+
+state 94
+	keywords : KSTS .  (86)
+
+	.  reduce 86
+
+
+state 95
+	complex_constant : '(' . constant ',' constant ')'  (91)
+	expression : '(' . expression ')'  (134)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	constant  goto 114
+	expression  goto 115
+	number  goto 99
+
+
+state 96
+	operand : constant .  (56)
+
+	.  reduce 56
+
+
+state 97
+	operand : complex_constant .  (59)
+
+	.  reduce 59
+
+
+state 98
+	constant : expression .  (121)
+
+	.  reduce 121
+
+
+state 99
+	expression : number .  (135)
+
+	.  reduce 135
+
+
+state 100
+	operand : registers . conjugate  (55)
+	conjugate : .  (70)
+
+	MCONJ  shift 116
+	COMMENT  reduce 70
+	KSEPARATOR  reduce 70
+	'\n'  reduce 70
+	','  reduce 70
+	'('  reduce 70
+
+	conjugate  goto 117
+
+
+state 101
+	instruction : opcode operands .  (15)
+	operands : operands . ',' operand options  (53)
+
+	','  shift 118
+	COMMENT  reduce 15
+	KSEPARATOR  reduce 15
+	'\n'  reduce 15
+
+
+state 102
+	operands : operand . options  (54)
+	options : .  (89)
+
+	'('  shift 119
+	COMMENT  reduce 89
+	KSEPARATOR  reduce 89
+	'\n'  reduce 89
+	','  reduce 89
+
+	options  goto 120
+
+
+state 103
+	operand : keywords .  (57)
+
+	.  reduce 57
+
+
+state 104
+	instruction : opcode offset . do_until  (14)
+	addr_expr_no_reg : offset . KPRE constant  (81)
+	addr_expr_no_reg : offset . '[' constant ']'  (82)
+	addr_expr_no_reg : offset .  (83)
+
+	KUNTIL  shift 121
+	KPRE  shift 122
+	'['  shift 123
+	COMMENT  reduce 83
+	KSEPARATOR  reduce 83
+	'\n'  reduce 83
+	','  reduce 83
+	'('  reduce 83
+
+	do_until  goto 124
+
+
+state 105
+	operand : addr .  (58)
+
+	.  reduce 58
+
+
+state 106
+	addr : addr_expr_no_reg .  (74)
+
+	.  reduce 74
+
+
+state 107
+	operand : ena .  (60)
+
+	.  reduce 60
+
+
+state 108
+	statement : instruction_cond KSEPARATOR instruction COMMENT .  (10)
+
+	.  reduce 10
+
+
+state 109
+	statement : instruction_cond KSEPARATOR instruction KSEPARATOR . instruction  (11)
+	statement : instruction_cond KSEPARATOR instruction KSEPARATOR . instruction COMMENT  (12)
+
+	OPCODE  shift 41
+	.  error
+
+	opcode  goto 42
+	instruction  goto 125
+
+
+state 110
+	expression : '(' . expression ')'  (134)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	expression  goto 126
+	number  goto 99
+
+
+state 111
+	expression : '-' expression .  (133)
+
+	.  reduce 133
+
+
+state 112
+	addr : KPM '(' . addr_expr ')'  (73)
+
+	OFFSET  shift 47
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	RIX  shift 127
+	'('  shift 110
+	.  error
+
+	constant  goto 128
+	expression  goto 98
+	number  goto 99
+	offset  goto 129
+	addr_expr  goto 130
+	addr_expr_reg  goto 131
+	addr_expr_no_reg  goto 132
+
+
+state 113
+	addr : KDM '(' . addr_expr ')'  (72)
+
+	OFFSET  shift 47
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	RIX  shift 127
+	'('  shift 110
+	.  error
+
+	constant  goto 128
+	expression  goto 98
+	number  goto 99
+	offset  goto 129
+	addr_expr  goto 133
+	addr_expr_reg  goto 131
+	addr_expr_no_reg  goto 132
+
+
+state 114
+	complex_constant : '(' constant . ',' constant ')'  (91)
+
+	','  shift 134
+	.  error
+
+
+state 115
+	constant : expression .  (121)
+	expression : '(' expression . ')'  (134)
+
+	')'  shift 135
+	','  reduce 121
+
+
+state 116
+	conjugate : MCONJ .  (71)
+
+	.  reduce 71
+
+
+state 117
+	operand : registers conjugate .  (55)
+
+	.  reduce 55
+
+
+state 118
+	operands : operands ',' . operand options  (53)
+
+	OFFSET  shift 47
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	RCNTR  shift 52
+	RLPEVER  shift 53
+	RCACTL  shift 54
+	RLPSTACK  shift 55
+	RPCSTACK  shift 56
+	RASTATR  shift 57
+	RASTATI  shift 58
+	RASTATC  shift 59
+	RMSTAT  shift 60
+	RSSTAT  shift 61
+	RPX  shift 62
+	RICNTL  shift 63
+	RIMASK  shift 64
+	RIRPTL  shift 65
+	RIVEC0  shift 66
+	RIVEC1  shift 67
+	RIVEC2  shift 68
+	RIVEC3  shift 69
+	RDSTAT0  shift 70
+	RDSTAT1  shift 71
+	RUMCOUNT  shift 72
+	RID  shift 73
+	RIX  shift 74
+	RMX  shift 75
+	RLX  shift 76
+	RBX  shift 77
+	RRX  shift 78
+	RACC  shift 79
+	MSEC_REG  shift 80
+	MBIT_REV  shift 81
+	MAV_LATCH  shift 82
+	MAL_SAT  shift 83
+	MM_MODE  shift 84
+	MTIMER  shift 85
+	MSEC_DAG  shift 86
+	MM_BIAS  shift 87
+	MINT  shift 88
+	KNONE  shift 89
+	KPM  shift 90
+	KDM  shift 91
+	KPC  shift 92
+	KLOOP  shift 93
+	KSTS  shift 94
+	'('  shift 95
+	.  error
+
+	constant  goto 96
+	complex_constant  goto 97
+	expression  goto 98
+	number  goto 99
+	registers  goto 100
+	operand  goto 136
+	keywords  goto 103
+	offset  goto 129
+	addr  goto 105
+	addr_expr_no_reg  goto 106
+	ena  goto 107
+
+
+state 119
+	options : '(' . moptions ')'  (90)
+
+	FRND  shift 137
+	FSS  shift 138
+	FSU  shift 139
+	FUS  shift 140
+	FUU  shift 141
+	FHI  shift 142
+	FLO  shift 143
+	FHIRND  shift 144
+	FLORND  shift 145
+	FNORND  shift 146
+	FHIX  shift 147
+	.  error
+
+	moptions  goto 148
+
+
+state 120
+	operands : operand options .  (54)
+
+	.  reduce 54
+
+
+state 121
+	do_until : KUNTIL . term  (47)
+	term : .  (50)
+
+	KCE  shift 149
+	KFOREVER  shift 150
+	COMMENT  reduce 50
+	KSEPARATOR  reduce 50
+	'\n'  reduce 50
+
+	term  goto 151
+
+
+state 122
+	addr_expr_no_reg : offset KPRE . constant  (81)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	constant  goto 152
+	expression  goto 98
+	number  goto 99
+
+
+state 123
+	addr_expr_no_reg : offset '[' . constant ']'  (82)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	constant  goto 153
+	expression  goto 98
+	number  goto 99
+
+
+state 124
+	instruction : opcode offset do_until .  (14)
+
+	.  reduce 14
+
+
+state 125
+	statement : instruction_cond KSEPARATOR instruction KSEPARATOR instruction .  (11)
+	statement : instruction_cond KSEPARATOR instruction KSEPARATOR instruction . COMMENT  (12)
+
+	COMMENT  shift 154
+	'\n'  reduce 11
+
+
+state 126
+	expression : '(' expression . ')'  (134)
+
+	')'  shift 135
+	.  error
+
+
+state 127
+	addr_expr_reg : RIX . addr_op RMX  (78)
+	addr_expr_reg : RIX . addr_op constant  (79)
+	addr_expr_reg : RIX .  (80)
+
+	KPOST  shift 155
+	KPRE  shift 156
+	')'  reduce 80
+
+	addr_op  goto 157
+
+
+state 128
+	addr_expr : constant .  (77)
+
+	.  reduce 77
+
+
+state 129
+	addr_expr_no_reg : offset . KPRE constant  (81)
+	addr_expr_no_reg : offset . '[' constant ']'  (82)
+	addr_expr_no_reg : offset .  (83)
+
+	KPRE  shift 122
+	'['  shift 123
+	COMMENT  reduce 83
+	KSEPARATOR  reduce 83
+	'\n'  reduce 83
+	','  reduce 83
+	'('  reduce 83
+	')'  reduce 83
+
+
+state 130
+	addr : KPM '(' addr_expr . ')'  (73)
+
+	')'  shift 158
+	.  error
+
+
+state 131
+	addr_expr : addr_expr_reg .  (75)
+
+	.  reduce 75
+
+
+state 132
+	addr_expr : addr_expr_no_reg .  (76)
+
+	.  reduce 76
+
+
+state 133
+	addr : KDM '(' addr_expr . ')'  (72)
+
+	')'  shift 159
+	.  error
+
+
+state 134
+	complex_constant : '(' constant ',' . constant ')'  (91)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	'('  shift 110
+	.  error
+
+	constant  goto 160
+	expression  goto 98
+	number  goto 99
+
+
+state 135
+	expression : '(' expression ')' .  (134)
+
+	.  reduce 134
+
+
+state 136
+	operands : operands ',' operand . options  (53)
+	options : .  (89)
+
+	'('  shift 119
+	COMMENT  reduce 89
+	KSEPARATOR  reduce 89
+	'\n'  reduce 89
+	','  reduce 89
+
+	options  goto 161
+
+
+state 137
+	moptions : FRND .  (122)
+
+	.  reduce 122
+
+
+state 138
+	moptions : FSS .  (123)
+
+	.  reduce 123
+
+
+state 139
+	moptions : FSU .  (124)
+
+	.  reduce 124
+
+
+state 140
+	moptions : FUS .  (125)
+
+	.  reduce 125
+
+
+state 141
+	moptions : FUU .  (126)
+
+	.  reduce 126
+
+
+state 142
+	moptions : FHI .  (127)
+
+	.  reduce 127
+
+
+state 143
+	moptions : FLO .  (128)
+
+	.  reduce 128
+
+
+state 144
+	moptions : FHIRND .  (129)
+
+	.  reduce 129
+
+
+state 145
+	moptions : FLORND .  (130)
+
+	.  reduce 130
+
+
+state 146
+	moptions : FNORND .  (131)
+
+	.  reduce 131
+
+
+state 147
+	moptions : FHIX .  (132)
+
+	.  reduce 132
+
+
+state 148
+	options : '(' moptions . ')'  (90)
+
+	')'  shift 162
+	.  error
+
+
+state 149
+	term : KCE .  (51)
+
+	.  reduce 51
+
+
+state 150
+	term : KFOREVER .  (52)
+
+	.  reduce 52
+
+
+state 151
+	do_until : KUNTIL term .  (47)
+
+	.  reduce 47
+
+
+state 152
+	addr_expr_no_reg : offset KPRE constant .  (81)
+
+	.  reduce 81
+
+
+state 153
+	addr_expr_no_reg : offset '[' constant . ']'  (82)
+
+	']'  shift 163
+	.  error
+
+
+state 154
+	statement : instruction_cond KSEPARATOR instruction KSEPARATOR instruction COMMENT .  (12)
+
+	.  reduce 12
+
+
+state 155
+	addr_op : KPOST .  (87)
+
+	.  reduce 87
+
+
+state 156
+	addr_op : KPRE .  (88)
+
+	.  reduce 88
+
+
+state 157
+	addr_expr_reg : RIX addr_op . RMX  (78)
+	addr_expr_reg : RIX addr_op . constant  (79)
+
+	DEC_NUMBER  shift 48
+	BIN_NUMBER  shift 49
+	HEX_NUMBER  shift 50
+	'-'  shift 51
+	RMX  shift 164
+	'('  shift 110
+	.  error
+
+	constant  goto 165
+	expression  goto 98
+	number  goto 99
+
+
+state 158
+	addr : KPM '(' addr_expr ')' .  (73)
+
+	.  reduce 73
+
+
+state 159
+	addr : KDM '(' addr_expr ')' .  (72)
+
+	.  reduce 72
+
+
+state 160
+	complex_constant : '(' constant ',' constant . ')'  (91)
+
+	')'  shift 166
+	.  error
+
+
+state 161
+	operands : operands ',' operand options .  (53)
+
+	.  reduce 53
+
+
+state 162
+	options : '(' moptions ')' .  (90)
+
+	.  reduce 90
+
+
+state 163
+	addr_expr_no_reg : offset '[' constant ']' .  (82)
+
+	.  reduce 82
+
+
+state 164
+	addr_expr_reg : RIX addr_op RMX .  (78)
+
+	.  reduce 78
+
+
+state 165
+	addr_expr_reg : RIX addr_op constant .  (79)
+
+	.  reduce 79
+
+
+state 166
+	complex_constant : '(' constant ',' constant ')' .  (91)
+
+	.  reduce 91
+
+
+112 terminals, 29 nonterminals
+139 grammar rules, 167 states

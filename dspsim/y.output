@@ -1,0 +1,507 @@
+   0  $accept : source $end
+
+   1  source :
+   2         | source sentence
+
+   3  sentence : LABEL statement '\n'
+   4           | statement '\n'
+
+   5  statement :
+   6            | instruction COMMENT
+   7            | instruction
+   8            | COMMENT
+
+   9  instruction : KDO OFFSET KUNTIL term
+  10              | OPCODE operands
+  11              | OPCODE
+
+  12  term : KCE
+  13       | KFOREVER
+
+  14  operands : operands ',' operand options
+  15           | operand options
+
+  16  operand : registers
+  17          | constant
+
+  18  options :
+  19          | '(' moptions ')'
+
+  20  registers : RDAG
+  21            | RRX
+  22            | RACC
+  23            | RCNTR
+  24            | RCACTL
+  25            | RLPSTACK
+  26            | RSTACK
+  27            | RASTAT
+  28            | RMSTAT
+  29            | RSSTAT
+  30            | RPX
+
+  31  constant : expression
+
+  32  moptions : FRND
+  33           | FSS
+  34           | FSU
+  35           | FUS
+  36           | FUU
+
+  37  expression : '-' expression
+  38             | '(' expression ')'
+  39             | number
+
+  40  number : DEC_NUMBER
+  41         | BIN_NUMBER
+  42         | HEX_NUMBER
+
+state 0
+	$accept : . source $end  (0)
+	source : .  (1)
+
+	.  reduce 1
+
+	source  goto 1
+
+
+state 1
+	$accept : source . $end  (0)
+	source : source . sentence  (2)
+	statement : .  (5)
+
+	$end  accept
+	LABEL  shift 2
+	OPCODE  shift 3
+	COMMENT  shift 4
+	KDO  shift 5
+	'\n'  reduce 5
+
+	sentence  goto 6
+	statement  goto 7
+	instruction  goto 8
+
+
+state 2
+	sentence : LABEL . statement '\n'  (3)
+	statement : .  (5)
+
+	OPCODE  shift 3
+	COMMENT  shift 4
+	KDO  shift 5
+	'\n'  reduce 5
+
+	statement  goto 9
+	instruction  goto 8
+
+
+state 3
+	instruction : OPCODE . operands  (10)
+	instruction : OPCODE .  (11)
+
+	DEC_NUMBER  shift 10
+	BIN_NUMBER  shift 11
+	HEX_NUMBER  shift 12
+	'-'  shift 13
+	RCNTR  shift 14
+	RCACTL  shift 15
+	RLPSTACK  shift 16
+	RSTACK  shift 17
+	RASTAT  shift 18
+	RMSTAT  shift 19
+	RSSTAT  shift 20
+	RPX  shift 21
+	RDAG  shift 22
+	RRX  shift 23
+	RACC  shift 24
+	'('  shift 25
+	COMMENT  reduce 11
+	'\n'  reduce 11
+
+	constant  goto 26
+	expression  goto 27
+	number  goto 28
+	registers  goto 29
+	operands  goto 30
+	operand  goto 31
+
+
+state 4
+	statement : COMMENT .  (8)
+
+	.  reduce 8
+
+
+state 5
+	instruction : KDO . OFFSET KUNTIL term  (9)
+
+	OFFSET  shift 32
+	.  error
+
+
+state 6
+	source : source sentence .  (2)
+
+	.  reduce 2
+
+
+state 7
+	sentence : statement . '\n'  (4)
+
+	'\n'  shift 33
+	.  error
+
+
+state 8
+	statement : instruction . COMMENT  (6)
+	statement : instruction .  (7)
+
+	COMMENT  shift 34
+	'\n'  reduce 7
+
+
+state 9
+	sentence : LABEL statement . '\n'  (3)
+
+	'\n'  shift 35
+	.  error
+
+
+state 10
+	number : DEC_NUMBER .  (40)
+
+	.  reduce 40
+
+
+state 11
+	number : BIN_NUMBER .  (41)
+
+	.  reduce 41
+
+
+state 12
+	number : HEX_NUMBER .  (42)
+
+	.  reduce 42
+
+
+state 13
+	expression : '-' . expression  (37)
+
+	DEC_NUMBER  shift 10
+	BIN_NUMBER  shift 11
+	HEX_NUMBER  shift 12
+	'-'  shift 13
+	'('  shift 25
+	.  error
+
+	expression  goto 36
+	number  goto 28
+
+
+state 14
+	registers : RCNTR .  (23)
+
+	.  reduce 23
+
+
+state 15
+	registers : RCACTL .  (24)
+
+	.  reduce 24
+
+
+state 16
+	registers : RLPSTACK .  (25)
+
+	.  reduce 25
+
+
+state 17
+	registers : RSTACK .  (26)
+
+	.  reduce 26
+
+
+state 18
+	registers : RASTAT .  (27)
+
+	.  reduce 27
+
+
+state 19
+	registers : RMSTAT .  (28)
+
+	.  reduce 28
+
+
+state 20
+	registers : RSSTAT .  (29)
+
+	.  reduce 29
+
+
+state 21
+	registers : RPX .  (30)
+
+	.  reduce 30
+
+
+state 22
+	registers : RDAG .  (20)
+
+	.  reduce 20
+
+
+state 23
+	registers : RRX .  (21)
+
+	.  reduce 21
+
+
+state 24
+	registers : RACC .  (22)
+
+	.  reduce 22
+
+
+state 25
+	expression : '(' . expression ')'  (38)
+
+	DEC_NUMBER  shift 10
+	BIN_NUMBER  shift 11
+	HEX_NUMBER  shift 12
+	'-'  shift 13
+	'('  shift 25
+	.  error
+
+	expression  goto 37
+	number  goto 28
+
+
+state 26
+	operand : constant .  (17)
+
+	.  reduce 17
+
+
+state 27
+	constant : expression .  (31)
+
+	.  reduce 31
+
+
+state 28
+	expression : number .  (39)
+
+	.  reduce 39
+
+
+state 29
+	operand : registers .  (16)
+
+	.  reduce 16
+
+
+state 30
+	instruction : OPCODE operands .  (10)
+	operands : operands . ',' operand options  (14)
+
+	','  shift 38
+	COMMENT  reduce 10
+	'\n'  reduce 10
+
+
+state 31
+	operands : operand . options  (15)
+	options : .  (18)
+
+	'('  shift 39
+	COMMENT  reduce 18
+	'\n'  reduce 18
+	','  reduce 18
+
+	options  goto 40
+
+
+state 32
+	instruction : KDO OFFSET . KUNTIL term  (9)
+
+	KUNTIL  shift 41
+	.  error
+
+
+state 33
+	sentence : statement '\n' .  (4)
+
+	.  reduce 4
+
+
+state 34
+	statement : instruction COMMENT .  (6)
+
+	.  reduce 6
+
+
+state 35
+	sentence : LABEL statement '\n' .  (3)
+
+	.  reduce 3
+
+
+state 36
+	expression : '-' expression .  (37)
+
+	.  reduce 37
+
+
+state 37
+	expression : '(' expression . ')'  (38)
+
+	')'  shift 42
+	.  error
+
+
+state 38
+	operands : operands ',' . operand options  (14)
+
+	DEC_NUMBER  shift 10
+	BIN_NUMBER  shift 11
+	HEX_NUMBER  shift 12
+	'-'  shift 13
+	RCNTR  shift 14
+	RCACTL  shift 15
+	RLPSTACK  shift 16
+	RSTACK  shift 17
+	RASTAT  shift 18
+	RMSTAT  shift 19
+	RSSTAT  shift 20
+	RPX  shift 21
+	RDAG  shift 22
+	RRX  shift 23
+	RACC  shift 24
+	'('  shift 25
+	.  error
+
+	constant  goto 26
+	expression  goto 27
+	number  goto 28
+	registers  goto 29
+	operand  goto 43
+
+
+state 39
+	options : '(' . moptions ')'  (19)
+
+	FRND  shift 44
+	FSS  shift 45
+	FSU  shift 46
+	FUS  shift 47
+	FUU  shift 48
+	.  error
+
+	moptions  goto 49
+
+
+state 40
+	operands : operand options .  (15)
+
+	.  reduce 15
+
+
+state 41
+	instruction : KDO OFFSET KUNTIL . term  (9)
+
+	KCE  shift 50
+	KFOREVER  shift 51
+	.  error
+
+	term  goto 52
+
+
+state 42
+	expression : '(' expression ')' .  (38)
+
+	.  reduce 38
+
+
+state 43
+	operands : operands ',' operand . options  (14)
+	options : .  (18)
+
+	'('  shift 39
+	COMMENT  reduce 18
+	'\n'  reduce 18
+	','  reduce 18
+
+	options  goto 53
+
+
+state 44
+	moptions : FRND .  (32)
+
+	.  reduce 32
+
+
+state 45
+	moptions : FSS .  (33)
+
+	.  reduce 33
+
+
+state 46
+	moptions : FSU .  (34)
+
+	.  reduce 34
+
+
+state 47
+	moptions : FUS .  (35)
+
+	.  reduce 35
+
+
+state 48
+	moptions : FUU .  (36)
+
+	.  reduce 36
+
+
+state 49
+	options : '(' moptions . ')'  (19)
+
+	')'  shift 54
+	.  error
+
+
+state 50
+	term : KCE .  (12)
+
+	.  reduce 12
+
+
+state 51
+	term : KFOREVER .  (13)
+
+	.  reduce 13
+
+
+state 52
+	instruction : KDO OFFSET KUNTIL term .  (9)
+
+	.  reduce 9
+
+
+state 53
+	operands : operands ',' operand options .  (14)
+
+	.  reduce 14
+
+
+state 54
+	options : '(' moptions ')' .  (19)
+
+	.  reduce 19
+
+
+86 terminals, 14 nonterminals
+43 grammar rules, 55 states

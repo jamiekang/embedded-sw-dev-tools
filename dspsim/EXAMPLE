@@ -1,0 +1,6 @@
+* How to run simulation example:
+dspsim -c -q pseudo.asm >! pseudo.log
+dspsim -s pseudo.asm >! pseudo.log
+
+* How to run assembler example:
+dspasm test1.asm
